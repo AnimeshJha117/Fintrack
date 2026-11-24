@@ -50,3 +50,13 @@ Check it works: `curl http://localhost:4000/api/health` should return `{"status"
 | `npm run dev`   | Start with auto-reload (development) |
 | `npm run build` | Compile TypeScript to `dist/`        |
 | `npm start`     | Run the compiled build               |
+
+## API
+
+| Method | Endpoint             | Body                        | Description                                       |
+| ------ | -------------------- | --------------------------- | --------------------------------------------------|
+| GET    | `/api/health`        |                             | Health check                                      |
+| POST   | `/api/auth/register` | `name`, `email`, `password` | Create a new user                                 |
+| POST   | `/api/auth/login`    | `email`, `password`         | Log in, returns access token, sets refresh cookie |
+| POST   | `/api/auth/refresh`  |                             | New access token using the refresh cookie         |
+| POST   | `/api/auth/logout`   |                             | Clear the refresh cookie                          |
