@@ -15,3 +15,8 @@ export function VerifyRefreshToken(token: string)
 {
   return jwt.verify(token, env.JWT_REFRESH_SECRET) as jwt.JwtPayload;
 }
+
+export function VerifyAccessToken(token: string) 
+{
+  return jwt.verify(token, env.JWT_ACCESS_SECRET) as jwt.JwtPayload;
+}

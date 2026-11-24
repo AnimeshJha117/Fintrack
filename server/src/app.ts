@@ -3,7 +3,7 @@ import helmet from "helmet";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { env } from "./config/env.js";
-import { AuthRouter } from "./routes/authroutes.js";
+import { AuthRouter } from "./routes/auth.routes.js";
 
 export const app = express();
 

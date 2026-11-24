@@ -45,11 +45,22 @@ Check it works: `curl http://localhost:4000/api/health` should return `{"status"
 
 ## Scripts (server)
 
-| Command         | What it does                         |
-| --------------- | ------------------------------------ |
-| `npm run dev`   | Start with auto-reload (development) |
-| `npm run build` | Compile TypeScript to `dist/`        |
-| `npm start`     | Run the compiled build               |
+| Command              | Function                             |
+| ---------------------| ------------------------------------ |
+| `npm run dev`        | Start with auto-reload (development) |
+| `npm run build`      | Compile TypeScript to `dist/`        |
+| `npm start`          | Run the compiled build               |
+| `npm test`           | Run the test suite once              |
+| `npm run test:watch` | Re-run tests on file changes         |
+
+## Testing
+
+Server tests use Vitest and supertest against an in-memory MongoDB, so no database setup or `.env` file is needed:
+
+```bash
+cd server
+npm test
+```
 
 ## API
 
@@ -60,3 +71,4 @@ Check it works: `curl http://localhost:4000/api/health` should return `{"status"
 | POST   | `/api/auth/login`    | `email`, `password`         | Log in, returns access token, sets refresh cookie |
 | POST   | `/api/auth/refresh`  |                             | New access token using the refresh cookie         |
 | POST   | `/api/auth/logout`   |                             | Clear the refresh cookie                          |
+| GET    | `/api/auth/me`       | Bearer token                | Get the logged-in user                            |
