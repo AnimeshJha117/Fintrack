@@ -14,15 +14,16 @@ A full-stack expense tracker with receipt scanning, budget alerts, spending insi
 
 ```
 expense-tracker/
-├── client/   # React frontend (not set up yet)
+├── client/   # React frontend
 ├── server/   # Express API
-└── shared/   # Zod schemas and types shared by both (not set up yet)
+└── shared/   # Zod schemas and types shared by both
 ```
 
 ## Prerequisites
 
 - Git
 - Node.js installed via [nvm](https://github.com/nvm-sh/nvm)
+- MongoDB Atlas cluster set as `MONGODB_URI` in `server/.env`
 
 ## Getting Started
 
