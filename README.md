@@ -72,3 +72,10 @@ npm test
 | POST   | `/api/auth/refresh`  |                             | New access token using the refresh cookie         |
 | POST   | `/api/auth/logout`   |                             | Clear the refresh cookie                          |
 | GET    | `/api/auth/me`       | Bearer token                | Get the logged-in user                            |
+| POST   | `/api/expenses`      | `amount`, `category`, `description?`, `date?` | Create an expense               |
+| GET    | `/api/expenses`      | (Bearer token)              | List your latest 100 expenses                     |
+| GET    | `/api/expenses/:id`  | (Bearer token)              | Get one expense                                   |
+| PATCH  | `/api/expenses/:id`  | any create field            | Update an expense                                 |
+| DELETE | `/api/expenses/:id`  | (Bearer token)              | Delete an expense                                 |
+
+> Amounts are integers in the smallest currency unit: `25050` means ₹250.50.
