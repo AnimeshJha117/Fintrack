@@ -2,6 +2,7 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { SaveRefreshToken, LoadRefreshToken, ClearRefreshToken } from './TokenStore'
 
 function createWindow(): void {
   // Create the browser window.
@@ -50,7 +51,11 @@ app.whenReady().then(() => {
   })
 
   // IPC test
-  ipcMain.on('ping', () => console.log('pong'))
+    ipcMain.handle('session:save', (_event, token: unknown) =>
+      typeof token === 'string' && token.length > 0 ? SaveRefreshToken(token) : false
+    )
+    ipcMain.handle('session:load', () => LoadRefreshToken())
+    ipcMain.handle('session:clear', () => ClearRefreshToken())
 
   createWindow()
 
