@@ -85,6 +85,14 @@ npm test
 
 With the server running, interactive docs are available at `http://localhost:4000/api/docs`
 
+## Client structure
+
+- `src/renderer/src/pages/`: one file per screen
+- `src/renderer/src/components/`: reusable UI (`Field`, `ProtectedRoute`)
+- `src/renderer/src/store/`: Zustand stores (`authStore` holds the logged-in user)
+- `src/renderer/src/lib/`: API client and helpers
+- `src/renderer/src/hooks/`: TanStack Query hooks per resource (`UseExpenses`)
+
 ## Deployment
 
 The API is deployed on Render:

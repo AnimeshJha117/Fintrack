@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { api, endSession, restoreSession, setSessionExpiredHandler, startSession } from '../lib/api'
+import { queryClient } from '../lib/queryclient'
 
 export interface User 
 {
@@ -74,8 +75,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         }
         
         await endSession()
+        queryClient.clear()
         set({ user: null, status: 'unauthenticated' })
     }
 }))
 
-setSessionExpiredHandler(() => useAuthStore.setState({ user: null, status: 'unauthenticated' }))
+setSessionExpiredHandler(() => {
+    queryClient.clear()
+    useAuthStore.setState({ user: null, status: 'unauthenticated' })
+})
