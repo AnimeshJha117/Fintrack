@@ -14,7 +14,7 @@ A full-stack expense tracker with receipt scanning, budget alerts, spending insi
 
 ```
 expense-tracker/
-├── client/   # React frontend
+├── client/   # Electron desktop app
 ├── server/   # Express API
 └── shared/   # Zod schemas and types shared by both
 ```

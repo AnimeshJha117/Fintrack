@@ -1,8 +1,41 @@
+# Dependencies
 node_modules/
+
+# Build output
 dist/
 build/
+out/
+release/
+*.tsbuildinfo
+
+# Environment
 .env
 .env.*
+!.env.example
+
+# Test and coverage output
 coverage/
+test-results/
+playwright-report/
+
+# Logs
 *.log
+npm-debug.log*
+
+# Local test artifacts
+cookies.txt
+
+# OS files
 .DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+
+# Electron packaging
+*.AppImage
+*.deb
+*.exe
+*.dmg
+*.blockmap
