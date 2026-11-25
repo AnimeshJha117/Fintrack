@@ -9,6 +9,7 @@ import swaggerui from "swagger-ui-express";
 import { OpenApiSpec } from "./docs/openapi.js";
 
 export const app = express();
+app.set("trust proxy", 1);
 
 if (env.NODE_ENV !== "production")
 {

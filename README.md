@@ -85,6 +85,15 @@ npm test
 
 With the server running, interactive docs are available at `http://localhost:4000/api/docs`
 
+## Deployment
+
+The API is deployed on Render:
+- Build command: `npm install --include=dev && npm run build -w server`
+- Start command: `npm start -w server`
+- Health check path: `/api/health`
+- Environment variables: Generate secrets with `openssl rand -hex 32`.
+- Swagger docs are disabled in production.
+
 > Amounts are integers in the smallest currency unit: `25050` means ₹250.50.
 
 > Rate limiting: login and register allow 20 requests per 15 minutes per IP.
