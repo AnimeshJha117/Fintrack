@@ -41,7 +41,7 @@ npm install
 npm run dev
 ```
 
-Check it works: `curl http://localhost:4000/api/health` should return `{"status":"ok"}`.
+Check: `curl http://localhost:4000/api/health` should return `{"status":"ok"}`.
 
 ## Scripts (server)
 
@@ -55,7 +55,7 @@ Check it works: `curl http://localhost:4000/api/health` should return `{"status"
 
 ## Testing
 
-Server tests use Vitest and supertest against an in-memory MongoDB, so no database setup or `.env` file is needed:
+Server tests use Vitest and supertest against an in-memory MongoDB, so no database setup or `.env` file is needed.
 
 ```bash
 cd server
@@ -77,6 +77,13 @@ npm test
 | GET    | `/api/expenses/:id`  | (Bearer token)              | Get one expense                                   |
 | PATCH  | `/api/expenses/:id`  | any create field            | Update an expense                                 |
 | DELETE | `/api/expenses/:id`  | (Bearer token)              | Delete an expense                                 |
+| POST   | `/api/auth/login`    | `email`, `password`         | Log in, returns access and refresh tokens         |
+| POST   | `/api/auth/refresh`  | `RefreshToken`              | Exchange a refresh token for a new pair           |
+| POST   | `/api/auth/logout`   | `RefreshToken`              | Revoke a refresh token                            |
+
+## API Documentation
+
+With the server running, interactive docs are available at `http://localhost:4000/api/docs`
 
 > Amounts are integers in the smallest currency unit: `25050` means ₹250.50.
 

@@ -38,11 +38,11 @@ describe("login and protected routes", () => {
             .send({ email: user.email, password: user.password });
 
         expect(login.status).toBe(200);
-        expect(login.headers["set-cookie"]?.[0]).toContain("HttpOnly");
+        expect(login.body.RefreshToken).toBeTruthy();
 
         const me = await request(app)
             .get("/api/auth/me")
-            .set("Authorization", `Bearer ${login.body.accessToken}`);
+            .set("Authorization", `Bearer ${login.body.AccessToken}`);
 
         expect(me.status).toBe(200);
         expect(me.body.email).toBe(user.email);

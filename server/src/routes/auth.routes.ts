@@ -2,20 +2,23 @@ import { Router } from "express";
 import bcrypt from "bcrypt";
 import { UserModel } from "../models/User.js";
 import { validate } from "../middleware/validate.js"
-import { RegisterSchema, LoginSchema } from "../schemas/auth.schema.js";
-import { env } from "../config/env.js";
+import { RegisterSchema, LoginSchema, RefreshSchema } from "../schemas/auth.schema.js";
+import { RefreshTokenModel } from "../models/RefreshToken.js";
 import { RequireAuth } from "../middleware/requireauth.js";
 import { AuthLimiter } from "../middleware/RateLimit.js";
-import { SignAccessToken, SignRefreshToken, VerifyRefreshToken } from "../utils/tokens.js";
+import { SignAccessToken, SignRefreshToken, VerifyRefreshToken, HashToken, REFRESH_TTL_MS } from "../utils/tokens.js";
 
-const REFRESH_COOKIE = "RefreshToken";
-const RefreshCookieOptions = {
-    httpOnly: true,
-    secure: env.NODE_ENV === "production",
-    sameSite: "strict" as const,
-    path: "/api/auth",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-};
+async function IssueTokens(UserId: string)
+{
+    const RefreshToken = SignRefreshToken(UserId);
+    await RefreshTokenModel.create({
+        user: UserId,
+        tokenHash: HashToken(RefreshToken),
+        expiresAt: new Date(Date.now() + REFRESH_TTL_MS)
+    });
+
+    return { AccessToken: SignAccessToken(UserId), RefreshToken };
+}
 
 export const AuthRouter = Router();
 
@@ -44,42 +47,53 @@ AuthRouter.post("/login", AuthLimiter, validate(LoginSchema), async (req, res) =
         return;
     }
 
-    res.cookie(REFRESH_COOKIE, SignRefreshToken(user.id), RefreshCookieOptions);
+    const tokens = await IssueTokens(user.id);
     res.json({
-        accessToken: SignAccessToken(user.id),
-        user: { id: user.id, name: user.name, email: user.email },
+        ...tokens,
+        user: { id: user.id, name: user.name, email: user.email }
     });
 });
 
-AuthRouter.post("/refresh", async (req, res) => {
-    const token = req.cookies[REFRESH_COOKIE];
-    if (!token) {
-        res.status(401).json({ message: "Not authenticated" });
+AuthRouter.post("/refresh", AuthLimiter, validate(RefreshSchema), async (req, res) => {
+    const { RefreshToken } = req.body;
+
+    let UserId: string;
+    try 
+    {
+        UserId = VerifyRefreshToken(RefreshToken).sub as string;
+    } 
+    catch 
+    {
+        res.status(401).json({ message: "Invalid or expired session" });
         return;
     }
 
-    try {
-        const payload = VerifyRefreshToken(token);
-        const user = await UserModel.findById(payload.sub);
-        if (!user) {
-            res.status(401).json({ message: "Not authenticated" });
-            return;
-        }
+    const stored = await RefreshTokenModel.findOneAndDelete({ tokenHash: HashToken(RefreshToken) });
 
-        res.json({ accessToken: SignAccessToken(user.id) });
-    }
-    catch {
+    if (!stored) 
+    {
+        await RefreshTokenModel.deleteMany({ user: UserId });
         res.status(401).json({ message: "Invalid or expired session" });
+        return;
     }
+
+    const user = await UserModel.findById(UserId);
+    if (!user) 
+    {
+        res.status(401).json({ message: "Invalid or expired session" });
+        return;
+    }
+
+    res.json(await IssueTokens(user.id));
 });
 
-AuthRouter.post("/logout", (_req, res) => {
-    res.clearCookie(REFRESH_COOKIE, { path: RefreshCookieOptions.path });
+AuthRouter.post("/logout", validate(RefreshSchema), async (req, res) => {
+    await RefreshTokenModel.deleteOne({ tokenHash: HashToken(req.body.RefreshToken) });
     res.status(204).send();
 });
 
 AuthRouter.get("/me", RequireAuth, async (req, res) => {
-    const user = await UserModel.findById(req.userId);
+    const user = await UserModel.findById(req.UserId);
     if (!user) {
         res.status(404).json({ message: "User not found" });
         return;

@@ -20,12 +20,12 @@ function toDTO(e: InstanceType<typeof ExpenseModel>) {
 }
 
 ExpenseRouter.post("/", validate(CreateExpenseSchema), async (req, res) => {
-    const expense = await ExpenseModel.create({ ...req.body, user: req.userId });
+    const expense = await ExpenseModel.create({ ...req.body, user: req.UserId });
     res.status(201).json(toDTO(expense));
 });
 
 ExpenseRouter.get("/", async (req, res) => {
-    const expenses = await ExpenseModel.find({ user: req.userId })
+    const expenses = await ExpenseModel.find({ user: req.UserId })
         .sort({ date: -1 })
         .limit(100);
     res.json(expenses.map(toDTO));
@@ -37,7 +37,7 @@ ExpenseRouter.get("/:id", async (req, res) => {
         res.status(404).json({ message: "Expense not found" });
         return;
     }
-    const expense = await ExpenseModel.findOne({ _id: req.params.id, user: req.userId });
+    const expense = await ExpenseModel.findOne({ _id: req.params.id, user: req.UserId });
     if (!expense) 
     {
         res.status(404).json({ message: "Expense not found" });
@@ -54,7 +54,7 @@ ExpenseRouter.patch("/:id", validate(UpdateExpenseSchema), async (req, res) => {
     }
 
     const expense = await ExpenseModel.findOneAndUpdate(
-        { _id: req.params.id, user: req.userId },
+        { _id: req.params.id, user: req.UserId },
         req.body,
         { new: true, runValidators: true },
     );
@@ -76,7 +76,7 @@ ExpenseRouter.delete("/:id", async (req, res) => {
 
     const expense = await ExpenseModel.findOneAndDelete({
         _id: req.params.id,
-        user: req.userId,
+        user: req.UserId,
     });
 
     if (!expense) 

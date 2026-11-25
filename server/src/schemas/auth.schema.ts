@@ -10,3 +10,7 @@ export const LoginSchema = z.object({
     email: z.string().trim().toLowerCase().email(),
     password: z.string().min(1),
 });
+
+export const RefreshSchema = z.object({
+    RefreshToken: z.string().min(1),
+});

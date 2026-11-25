@@ -4,7 +4,7 @@ import { VerifyAccessToken } from "../utils/tokens.js";
 declare global {
     namespace Express {
         interface Request {
-            userId?: string;
+            UserId?: string;
         }
     }
 }
@@ -18,7 +18,7 @@ export function RequireAuth(req: Request, res: Response, next: NextFunction) {
 
     try {
         const payload = VerifyAccessToken(header.slice(7));
-        req.userId = payload.sub as string;
+        req.UserId = payload.sub as string;
         next();
     }
     catch {
