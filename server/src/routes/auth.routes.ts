@@ -5,6 +5,7 @@ import { validate } from "../middleware/validate.js"
 import { RegisterSchema, LoginSchema } from "../schemas/auth.schema.js";
 import { env } from "../config/env.js";
 import { RequireAuth } from "../middleware/requireauth.js";
+import { AuthLimiter } from "../middleware/RateLimit.js";
 import { SignAccessToken, SignRefreshToken, VerifyRefreshToken } from "../utils/tokens.js";
 
 const REFRESH_COOKIE = "RefreshToken";
@@ -18,7 +19,7 @@ const RefreshCookieOptions = {
 
 export const AuthRouter = Router();
 
-AuthRouter.post("/register", validate(RegisterSchema), async (req, res) => {
+AuthRouter.post("/register", AuthLimiter, validate(RegisterSchema), async (req, res) => {
     const { name, email, password } = req.body;
 
     const existing = await UserModel.findOne({ email });
@@ -33,7 +34,7 @@ AuthRouter.post("/register", validate(RegisterSchema), async (req, res) => {
     res.status(201).json({ id: user.id, name: user.name, email: user.email });
 });
 
-AuthRouter.post("/login", validate(LoginSchema), async (req, res) => {
+AuthRouter.post("/login", AuthLimiter, validate(LoginSchema), async (req, res) => {
     const { email, password } = req.body;
 
     const user = await UserModel.findOne({ email }).select("+passwordhash");

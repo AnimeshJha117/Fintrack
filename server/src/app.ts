@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import { env } from "./config/env.js";
 import { AuthRouter } from "./routes/auth.routes.js";
 import { ExpenseRouter } from "./routes/expense.routes.js";
+import { NotFound, ErrorHandler } from "./middleware/ErrorHandler.js";
 
 export const app = express();
 
@@ -19,3 +20,5 @@ app.get("/api/health", (_req, res) => {
 
 app.use("/api/auth", AuthRouter);
 app.use("/api/expenses", ExpenseRouter);
+app.use(NotFound);
+app.use(ErrorHandler);

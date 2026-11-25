@@ -79,3 +79,5 @@ npm test
 | DELETE | `/api/expenses/:id`  | (Bearer token)              | Delete an expense                                 |
 
 > Amounts are integers in the smallest currency unit: `25050` means ₹250.50.
+
+> Rate limiting: login and register allow 20 requests per 15 minutes per IP.
