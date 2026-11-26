@@ -12,3 +12,8 @@ export function ToMinor(input: string): number | null
     const minor = Number(match[1]) * 100 + Number((match[2] ?? '').padEnd(2, '0'))
     return minor > 0 ? minor : null
 }
+
+export function FromMinor(minor: number): string 
+{
+    return (minor / 100).toFixed(2)
+}

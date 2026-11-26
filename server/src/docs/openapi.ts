@@ -161,6 +161,15 @@ export const OpenApiSpec = {
             get: {
                 tags: ["Expenses"],
                 summary: "List your latest 100 expenses",
+                parameters: [
+                    {
+                        name: "month",
+                        in: "query",
+                        schema: { type: "string", example: "2026-02" },
+                        description: "YYYY-MM",
+                    },
+                    { name: "category", in: "query", schema: { type: "string" } },
+                ],
                 security: [{ bearerAuth: [] }],
                 responses: {
                     "200": {
@@ -196,6 +205,23 @@ export const OpenApiSpec = {
                         },
                     },
                     "400": { description: "Validation failed" },
+                },
+            },
+        },
+        "/expenses/categories": {
+            get: {
+                tags: ["Expenses"],
+                summary: "List the distinct categories you have used",
+                security: [{ bearerAuth: [] }],
+                responses: {
+                    "200": {
+                        description: "Sorted category names",
+                        content: {
+                            "application/json": {
+                                schema: { type: "array", items: { type: "string" } },
+                            },
+                        },
+                    },
                 },
             },
         },

@@ -54,3 +54,43 @@ describe("expenses", () => {
         expect(del.status).toBe(204);
     });
 });
+
+describe("expense filters", () => {
+    it("filters by month and category", async () => {
+        const token = await GetToken();
+        const auth = { Authorization: `Bearer ${token}` };
+        const add = (category: string, date: string) =>
+        request(app).post("/api/expenses").set(auth).send({ amount: 1000, category, date });
+
+        await add("Food", "2026-01-15");
+        await add("Food", "2026-02-10");
+        await add("Rent", "2026-02-01");
+
+        const feb = await request(app).get("/api/expenses?month=2026-02").set(auth);
+        expect(feb.body).toHaveLength(2);
+
+        const febFood = await request(app)
+        .get("/api/expenses?month=2026-02&category=Food")
+        .set(auth);
+        expect(febFood.body).toHaveLength(1);
+    });
+
+    it("rejects an invalid month", async () => {
+        const token = await GetToken();
+        const res = await request(app)
+        .get("/api/expenses?month=2026-13")
+        .set("Authorization", `Bearer ${token}`);
+        expect(res.status).toBe(400);
+    });
+
+    it("lists distinct categories", async () => {
+        const token = await GetToken();
+        const auth = { Authorization: `Bearer ${token}` };
+        await request(app).post("/api/expenses").set(auth).send({ amount: 100, category: "Food" });
+        await request(app).post("/api/expenses").set(auth).send({ amount: 100, category: "Food" });
+        await request(app).post("/api/expenses").set(auth).send({ amount: 100, category: "Rent" });
+
+        const res = await request(app).get("/api/expenses/categories").set(auth);
+        expect(res.body).toEqual(["Food", "Rent"]);
+    });
+});

@@ -20,9 +20,44 @@ export interface ExpenseInput
 
 const KEY = ['expenses']
 
-export function UseExpenses() 
+export interface ExpenseFilters 
 {
-    return useQuery({ queryKey: KEY, queryFn: () => api<Expense[]>('/expenses') })
+    month?: string
+    category?: string
+}
+
+export function UseExpenses(filters: ExpenseFilters = {}) 
+{
+    const params = new URLSearchParams()
+    if (filters.month) params.set('month', filters.month)
+    if (filters.category) params.set('category', filters.category)
+    const query = params.toString()
+
+    return useQuery
+    ({
+        queryKey: [...KEY, 'list', filters],
+        queryFn: () => api<Expense[]>(`/expenses${query ? `?${query}` : ''}`)
+    })
+}
+
+export function UseCategories() 
+{
+    return useQuery
+    ({
+        queryKey: [...KEY, 'categories'],
+        queryFn: () => api<string[]>('/expenses/categories')
+    })
+}
+
+export function UseUpdateExpense() 
+{
+    const qc = useQueryClient()
+    return useMutation
+    ({
+        mutationFn: ({ id, input }: { id: string; input: Partial<ExpenseInput> }) =>
+        api<Expense>(`/expenses/${id}`, { method: 'PATCH', body: input }),
+        onSuccess: () => qc.invalidateQueries({ queryKey: KEY })
+    })
 }
 
 export function UseCreateExpense() 
@@ -35,7 +70,8 @@ export function UseCreateExpense()
     })
 }
 
-export function UseDeleteExpense() {
+export function UseDeleteExpense() 
+{
     const qc = useQueryClient()
     return useMutation
     ({

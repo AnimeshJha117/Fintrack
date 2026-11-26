@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import { ExpenseModel } from "../models/Expense.js";
 import { RequireAuth } from "../middleware/requireauth.js";
 import { validate } from "../middleware/validate.js";
-import { CreateExpenseSchema, UpdateExpenseSchema } from "../schemas/expense.schema.js";
+import { CreateExpenseSchema, UpdateExpenseSchema, ListExpensesQuerySchema } from "../schemas/expense.schema.js";
 
 export const ExpenseRouter = Router();
 
@@ -25,10 +25,38 @@ ExpenseRouter.post("/", validate(CreateExpenseSchema), async (req, res) => {
 });
 
 ExpenseRouter.get("/", async (req, res) => {
-    const expenses = await ExpenseModel.find({ user: req.UserId })
-        .sort({ date: -1 })
-        .limit(100);
+    const parsed = ListExpensesQuerySchema.safeParse(req.query);
+    if (!parsed.success) 
+    {
+        res.status(400).json
+        ({
+            message: "Validation failed",
+            errors: parsed.error.flatten().fieldErrors,
+        });
+
+        return;
+    }
+
+    const { month, category } = parsed.data;
+    const filter: Record<string, unknown> = { user: req.UserId };
+
+    if (month) 
+    {
+        const [year, mon] = month.split("-").map(Number);
+        filter.date = {
+            $gte: new Date(Date.UTC(year, mon - 1, 1)),
+            $lt: new Date(Date.UTC(year, mon, 1)),
+        };
+    }
+    if (category) filter.category = category;
+
+    const expenses = await ExpenseModel.find(filter).sort({ date: -1 }).limit(100);
     res.json(expenses.map(toDTO));
+});
+
+ExpenseRouter.get("/categories", async (req, res) => {
+    const categories = await ExpenseModel.distinct("category", { user: req.UserId });
+    res.json(categories.sort());
 });
 
 ExpenseRouter.get("/:id", async (req, res) => {

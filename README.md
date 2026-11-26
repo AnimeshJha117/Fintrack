@@ -80,6 +80,8 @@ npm test
 | POST   | `/api/auth/login`    | `email`, `password`         | Log in, returns access and refresh tokens         |
 | POST   | `/api/auth/refresh`  | `RefreshToken`              | Exchange a refresh token for a new pair           |
 | POST   | `/api/auth/logout`   | `RefreshToken`              | Revoke a refresh token                            |
+| GET    | `/api/expenses`      | optional `?month=YYYY-MM&category=Food` | List your latest 100 expenses         |
+| GET    | `/api/expenses/categories` | (Bearer token)        | List the categories you have used                 |
 
 ## API Documentation
 
