@@ -4,8 +4,8 @@ A full-stack expense tracker with receipt scanning, budget alerts, spending insi
 
 ## Tech Stack
 
-- **Frontend:** React, TypeScript, Vite, Tailwind CSS, React Router, TanStack Query, Zustand, Recharts
-- **Backend:** Node.js, Express, TypeScript, Mongoose, JWT, bcrypt, Multer, Zod, Helmet
+- **Frontend:** React, Vite, Tailwind CSS, React Router, TanStack Query, Zustand, Recharts
+- **Backend:** Node.js, Express, JavaScript, Mongoose, JWT, bcrypt, Multer, Zod, Helmet
 - **Database/Storage:** MongoDB Atlas, Cloudinary
 - **OCR:** Tesseract.js
 - **Testing/Tools:** Vitest, Playwright, Postman, Swagger/OpenAPI
@@ -98,7 +98,7 @@ With the server running, interactive docs are available at `http://localhost:400
 ## Deployment
 
 The API is deployed on Render:
-- Build command: `npm install --include=dev && npm run build -w server`
+- Build command: `npm install`
 - Start command: `npm start -w server`
 - Health check path: `/api/health`
 - Environment variables: Generate secrets with `openssl rand -hex 32`.
