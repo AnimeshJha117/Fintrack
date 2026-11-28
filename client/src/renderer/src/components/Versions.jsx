@@ -1,8 +1,6 @@
 import { useState } from 'react'
-
-function Versions(): React.JSX.Element {
+function Versions() {
   const [versions] = useState(window.electron.process.versions)
-
   return (
     <ul className="versions">
       <li className="electron-version">Electron v{versions.electron}</li>
@@ -11,5 +9,4 @@ function Versions(): React.JSX.Element {
     </ul>
   )
 }
-
 export default Versions
